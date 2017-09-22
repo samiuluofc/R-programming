@@ -1,0 +1,4 @@
+> mat <- makeCacheMatrix(matrix(c(2,2,3,2),2,2))
+> mat$getinv()
+> cacheSolve(mat)
+> mat$getinv()

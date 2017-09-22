@@ -1,0 +1,9 @@
+Installing Git: (or Git bash)
+
+https://git-scm.com/
+
+After installing, search for Git bash in the windows search box. 
+Now Config the username and email of the Git user.
+
+$ git config --global user.name xyz
+$ git config --global user.email sami.csemist@gmail.com

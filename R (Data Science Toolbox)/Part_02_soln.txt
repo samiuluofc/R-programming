@@ -1,0 +1,29 @@
+Creating remote repository: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+step 01: Login to my Github account
+step 02: go to top right + sign and choose new repository
+step 03: put the name "datasciencecoursera"
+step 04: Provide a short description, and make it public (FREE)
+step 05: select the check box for creating README.md, and then press the create repository button.
+
+The solution link:
+https://github.com/samiuluofc/datasciencecoursera
+
+Creating local repository: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Open Git Bash
+Go to your desire directory using windows commands.
+
+>> mkdir datasciencecoursera
+>> cd datasciencecoursera
+>> git init
+>> git add remote origin https://github.com/samiuluofc/datasciencecoursera
+
+OR make a clone of your remote repo into your desire PC directory
+>> git clone https://github.com/samiuluofc/datasciencecoursera
+
+For verify:
+git remote -v
+
+
+ 

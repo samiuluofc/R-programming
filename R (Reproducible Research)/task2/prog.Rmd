@@ -1,0 +1,133 @@
+---
+title: "Data Analysis of NOAA Storm Database"
+author: "Samiul Azam, U of Calgary"
+date: "September 18, 2016"
+output: html_document
+---
+
+# Synopsis  
+In this analysis, I consider the NOAA Storm Database to find the answer of two important questions. One question is that which types of events are most harmful with respect to population health, and another is which types of events have the greatest economic consequences. The database contains data (37 variables) on various types of disasters across the US from 1950 to 2011. Among the 37 variables, 7 of them are important to answer the questions. After preprocessing the raw data, I generate two new variables that help me to create two barplots which give the answer of the target questions.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Adding Necessary Libraries
+
+```{r step1, results="hide"}
+# Added libraries
+library(ggplot2)
+library(plyr)
+```
+
+# Data Processing Section  
+In this section, I process the data (create a new table) to make it suitable for result production.
+
+```{r step2}
+# Reading the Dataset
+data_raw <- read.csv("FStormData.csv.bz2")
+
+# Copying the raw data into another object
+storm <- data_raw
+
+# Selecting only the important variables for the analysis
+storm <- subset(storm, select=c("EVTYPE", "FATALITIES", "INJURIES", "PROPDMGEXP", "PROPDMG", "CROPDMGEXP", "CROPDMG"))
+
+# Check for NA values
+sum(is.na(storm[,"FATALITIES"]))
+sum(is.na(storm[,"INJURIES"]))
+sum(is.na(storm[,"PROPDMGEXP"]))
+sum(is.na(storm[,"PROPDMG"]))
+sum(is.na(storm[,"CROPDMGEXP"]))
+sum(is.na(storm[,"CROPDMG"]))
+sum(is.na(storm[,"EVTYPE"]))
+
+# Summary of variables (except "EVTYPE")
+summary(storm$PROPDMGEXP)
+summary(storm$CROPDMGEXP)
+summary(storm$PROPDMG)
+summary(storm$CROPDMG)
+summary(storm$FATALITIES)
+summary(storm$INJURIES)
+```
+  
+From the above summary, CROPDMGEXP and PROPDMGEXP contain the exponential terms as factor variable. These factor values should be replaced with the actual numerical values. Preprocessing is needed to make them correct and consistent.
+
+```{r step3}
+# Replacing factors with numbers
+storm$PROPDMGEXP <- revalue(storm$PROPDMGEXP, c("M"="6", "m"="6", "K"="3", "B"="9", "+"="1", "?"="1", "h"="2", "H"="2", "-"="1"))
+PROPDMG_COST <- storm$PROPDMG*(10^as.numeric(storm$PROPDMGEXP))
+storm$CROPDMGEXP <- revalue(storm$CROPDMGEXP, c("M"="6", "m"="6", "K"="3", "B"="9", "k"="3", "?"="1"))
+CROPDMG_COST <- storm$CROPDMG*(10^as.numeric(storm$CROPDMGEXP))
+```
+  
+I have also created two new variables: DMG_COST and LIFE_COST. DMG_COST is the total cost (add the crop damage cost and property damage cost). LIFE_COST is the total number of affected peoples (add the number of fatalaties and injuries).
+
+```{r step4}
+# Total Damage costs
+storm$DMG_COST <- PROPDMG_COST + CROPDMG_COST
+
+# Total affected lifes
+storm$LIFE_COST = storm$FATALITIES + storm$INJURIES
+```
+
+# Result Section  
+
+### Result section gives the answer of following two questions:  
+- Across the United States, which types of events (as indicated in the EVTYPE variable) are most  harmful with respect to population health?
+- Across the United States, which types of events have the greatest economic consequences?
+
+```{r step5}
+# Answer of Question 1: 
+
+# Select only the variables "EVTYPE" and "LIFE_COST"
+storm_temp1 <- subset(storm, select=c("EVTYPE", "LIFE_COST"))
+
+# Aggregate LIFE_COST for each type of disaster event (across the US)
+plot_data_1 <- aggregate(data = storm_temp1, LIFE_COST ~ EVTYPE, FUN = sum)
+
+# Sort the (in descending order) table according to LIFE_COST
+plot_data_1 <- plot_data_1[order(plot_data_1$LIFE_COST, decreasing = TRUE),]
+
+# Select top 20
+plot_data <- plot_data_1[1:20,]
+
+# Bar ploting
+g <- ggplot(plot_data, aes(EVTYPE, LIFE_COST))
+g <- g + geom_bar(stat='identity')
+g <- g + xlab("Disaster Event Type") + ylab("Number of Fatalities and Injuries") + ggtitle( "Top 20 harmful disasters(1950 to November 2011)")
+g <- g + theme(axis.text.x=element_text(angle = 90, hjust = 1))
+print(g)
+```
+  
+Figure 01: The plot shows the number of affected peoples (death and injuries) by different disaster events (Top 20). We can see that TORNADO is the most harmful disaster with respect to population health accros the US.
+
+```{r step6}
+# Anwer of Question 2:
+
+# Select only the variables "EVTYPE" and "LIFE_COST"
+storm_temp2 <- subset(storm, select=c("EVTYPE", "DMG_COST"))
+
+# Aggregate LIFE_COST for each type of disaster event (across the US)
+plot_data_2 <- aggregate(data = storm_temp2, DMG_COST ~ EVTYPE, FUN = sum)
+
+# Sort the (in descending order) table according to LIFE_COST
+plot_data_2 <- plot_data_2[order(plot_data_2$DMG_COST, decreasing = TRUE),]
+
+# Select top 20
+plot_data <- plot_data_2[1:20,]
+
+# Convert the amount into Billion $
+plot_data$DMG_COST <- plot_data$DMG_COST/1000000000
+
+
+# Bar ploting
+g <- ggplot(plot_data, aes(EVTYPE, DMG_COST))
+g <- g + geom_bar(stat='identity')
+g <- g + xlab("Disaster Event Type") + ylab("Amount of Damage in Billion $") + ggtitle( "Top 20 economically harmful disasters(1950 to November 2011)")
+g <- g + theme(axis.text.x=element_text(angle = 90, hjust = 1))
+print(g)
+```
+  
+Figure 02: The plot shows the amount of damage (crops and property) by different disaster events (Top 20). We can see that FLOOD has the greatest economic consequences accros the US.

@@ -1,0 +1,7 @@
+Creating a remote repo by forking someones remote repo.
+
+Need the Github link of the remote repo. 
+Follow the link. You may need to login to your own Github account.
+Click the Fork button at the top right corner of the remote repo. It will take few seconds to fork.
+
+Link: https://github.com/samiuluofc/datasharing

@@ -1,0 +1,10 @@
+Create a text file in the directory "datasciencecoursera".
+Open it and write "## This is a markdown file", and change the extension into ".md".
+
+then,
+>> git add .
+>> git commit -m add_another_file
+>> git push
+
+The link for the HelloWorld.md file in the remote repo.
+https://github.com/samiuluofc/datasciencecoursera/blob/master/HelloWorld.md

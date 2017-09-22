@@ -1,0 +1,82 @@
+---
+title: "Analysis of data (mtcars) using linear regression model"
+author: "Samiul Azam"
+date: "January 8, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Executive summary
+In this project I do exploratory data analysis of the 'mtcars' dataset to find answer of two target questions: (a) Is an automatic or manual transmission better for MPG? (b) Quantify the MPG difference between automatic and manual transmissions. Moreover, regression analysis has been applied to retrieve the relation between mpg with different car factors (weight, displacement, qsec, drat, horsepower). Inferential statistics is applied to figureout uncertainity. 
+
+
+## Exploratory analysis of data
+```{r cars2, echo=TRUE}
+data(mtcars) # Loading the data
+summary(mtcars$mpg)
+summary(mtcars$wt)
+```
+The data contains 32 observations. Each observation consists of 11 variables. Basic statistical measures of few important variables (mpg, wt) are provided above. In Figure 1, we see inverse relation between the MPG (mile per gallon) and wt (car weight). That means more weight means less MPG.
+
+## Answers of the questions
+Figure 2 shows the scatter plot of 'mpg' for 'am' (automatic = 0 and manual = 1). From the figure, it seems to be very clear that cars with automatic transmission shows less mpg than the manual. The mean mpg for automatic transmission is 17.15 whereas manual transmission shows 24.39. However, a car's MPG depends on other factors also, such as weight, disp, number of cylinders, hp. We need car data where all other configuration are same except the transmission.
+
+## Linear regression and interpretation of the coefficients
+Consider linear regression considering the variables mpg as response and wt + qsec as predictor.
+```{r cars3, echo=TRUE}
+fit <- lm(mpg ~ wt + qsec, data = mtcars)
+summary(fit)$coefficients
+```
+In the above we see the coefficients for the predictors. The interpretation is as follows:
+The model estimates an expected 5.05 decrease (negative) in standardized mpg for per unit (1000 lbs) increase in car weight holding the remaining variables as constant.
+The model estimates an expected 0.93 increase (positive) in standardized mpg for per unit (quarter mile time) increase in car qsec holding the remaining variables as constant.
+
+## Model Selection
+For model selection, I apply ANOVA over different models.Following we see the output of the anova function in R. It shows all the models that i select in this analysis.
+```{r cars4, echo=FALSE}
+fit1 <- lm(mpg ~ cyl, data = mtcars)
+fit2 <- lm(mpg ~ cyl + disp, data = mtcars)
+fit3 <- lm(mpg ~ cyl + disp + hp, data = mtcars)
+fit4 <- lm(mpg ~ cyl + disp + hp + drat, data = mtcars)
+fit5 <- lm(mpg ~ cyl + disp + hp + drat + wt, data = mtcars)
+anova(fit1,fit2,fit3,fit4,fit5)
+```
+From above, we say that the model 5 is the best among them as it shows minimum RSS and very low P-value.
+
+## Residual Plots and diagnosis
+If we see the residual plots (residual vs fitted value, scale location, residual vs leverage) of model 5, there is no systemmatic pattern inside them (more scattered and random). Moreover, most of the points fall on the line of normal Q-Q plot. So the model performs well enough.
+
+## Quantify uncertainity
+I use t.test to find the confidence interval in the difference between mpg of auto and manual transmission.
+
+```{r cars5, echo=FALSE}
+bin0 <- (mtcars[,"am"] == 0)
+bin1 <- (mtcars[,"am"] == 1)
+t.test(mtcars[bin1,"mpg"], mtcars[bin0,"mpg"])$conf
+
+```
+I found that the confidence interval doesnt contain the zero (allways positive). That means the population mean of mpg in manual transmission is always higher. 
+
+## Appendix of Figures
+
+```{r plot1, echo=FALSE, fig.height=3, fig.width=5, fig.align='center'}
+# Scatter plot of mpg and wt variable 
+with(mtcars, plot(mpg, wt))
+```
+Figure 1: Scatter plot of mpg (Miles per gallon) and wt (car weight).
+
+```{r plot2, echo=FALSE, fig.height=3, fig.width=5, fig.align='center'}
+# Scatter plot of mpg and am variable 
+with(mtcars, plot(mpg, am))
+```
+Figure 2: Scatter plot of mpg (Miles per gallon) and am (auto or manual). 0 means automatic and 1 means manual transmission.
+
+```{r plot3, echo=FALSE, fig.height=7, fig.width=7, fig.align='center'}
+# Residual plots
+par(mfrow = c(2,2))
+plot(fit5)
+```
+Figure 3: Residual plots.

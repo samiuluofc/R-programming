@@ -1,0 +1,223 @@
+> getwd() % show the present working directory (pwd)
+
+To change the present working directory:
+Go to file menu, then select "Change Dir..."
+
+> dir() % show all files and folders in the pwd.
+> ls() % to show all list of loaded functions.
+> q() % to quit the R console.
+
+For R coding take a new script ("code1.R") from file menu.
+Create a function inside the script.
+
+loading a function code file. 
+> source("code1.R").
+> myfucntion()
+
+Now add another function "second" with an argument x in it.
+You need to run 
+> source("code1.R")
+> second(4)
+
+Set your working directory to "testdir" with the setwd() command.
+> setwd("testdir")
+
+Create a file in your working directory called "mytest.R" using the file.create()
+> file.create("mytest.R")
+
+Check to see if "mytest.R" exists in the working directory using the file.exists() function.
+> file.exists("mytest.R")
+
+Use dir.create() to create a directory in the current working directory called
+"testdir".
+> dir.create("testdir")
+
+Access information about the file "mytest.R" by using file.info("mytest.R").
+
+Change the name of the file "mytest.R" to "mytest2.R" by using file.rename().
+> file.rename("mytest.R","mytest2.R")
+
+You might now try to delete mytest.R using file.remove('mytest2.R').
+
+Make a copy of "mytest2.R" called "mytest3.R" using file.copy().
+
+Provide the relative path to the file "mytest3.R" by using file.path().
+> file.path("mytest3.R")
+
+Take a look at the documentation for dir.create by entering ?dir.create.
+
+Create a directory in the current working directory called "testdir2" and a
+subdirectory for it called "testdir3", all in one command by using dir.create()
+and file.path().
+> dir.create(file.path('testdir2', 'testdir3'), recursive = TRUE)
+
+Delete the "testdir2" directory that you created by using unlink().
+> unlink('testdir2',recursive = TRUE)
+
+Go back to your original working directory using setwd(). (Recall that we created
+the variable old.dir with the full path for the orginal working directory at the
+start of these questions.)
+> setwd(old.dir)
+
+Pull up the documentation for `:` now.
+> ?`:`
+
+let's say that instead we want a vector of numbers ranging from 0 to 10, incremented by 0.5. seq(0, 10, by=0.5) 
+does just that. Try it out.
+> seq(0, 10, by=0.5)
+
+we just want a sequence of 30 numbers between 5 and 10. seq(5, 10, length=30) does the trick.
+> seq(5, 10, length=30)
+
+To confirm that my_seq has length 30, we can use the length() function. Try it now.
+> length(my_seq)
+
+Let's pretend we don't know the length of my_seq, but we want to generate a
+sequence of integers from 1 to N, where N represents the length of the my_seq
+vector. In other words, we want a new vector (1, 2, 3, ...) that is the same
+length as my_seq.
+> 1:length(my_seq)
+
+If we're interested in creating a vector that contains 40 zeros, we can use rep(0,times = 40).
+> rep(0,times = 40)
+
+If instead we want our vector to contain 10 repetitions of the vector (0, 1, 2),
+we can do rep(c(0, 1, 2), times = 10).
+> rep(c(0, 1, 2), times = 10)
+
+let's say that rather than repeating the vector (0, 1, 2) over and over
+again, we want our vector to contain 10 zeros, then 10 ones, then 10 twos. We can
+do this with the `each` argument. Try rep(c(0, 1, 2), each = 10).
+> rep(c(0, 1, 2), each = 10)
+
+----------------------------------------------------------------------------------------------------------------------
+Commands on vector:
+num_vect <- c(0.5, 55, -10, 6.)
+tf <- num_vect < 1
+
+The `<` and `>=` symbols in these examples are called 'logical operators'. Other
+logical operators include `>`, `<=`, `==` for exact equality, and `!=` for
+inequality.
+
+We can concate logical outputs by single &,|.
+
+my_char <- c("My", "name", "is")
+
+Right now, my_char is a character vector of length 3. Let's say we want to join 
+the elements of my_char together into one continuous character string (i.e. a
+character vector of length 1). We can do this using the paste() function.
+> paste(my_char, collapse = " ")
+
+To add (or 'concatenate') your name to the end of my_char, use the c() function
+like this: c(my_char, "your_name_here").
+
+Vector recycling! Try paste(LETTERS, 1:4, sep = "-"), where LETTERS is a
+predefined variable in R containing a character vector of all 26 letters in the
+English alphabet.
+
+----------------------------------------------------------------------------------------------------------------------
+Commands on NA:
+x <- c(44, NA, 5, NA)
+
+lets create a vector containing 1000 draws from a standard normal distribution with y <- rnorm(1000).
+let's create a vector containing 1000 NAs with z <- rep(NA, 1000).
+
+let's select 100 elements at random from these 2000 values (combining y and z) such that we don't know how many NAs we'll wind up with or what positions they'll occupy in our final vector -- my_data <- sample(c(y, z), 100).
+
+Let's first ask the question of where our NAs are located in our data. The is.na()
+function tells us whether each element of a vector is NA. Call is.na() on my_data
+and assign the result to my_na.
+> my_na <- is.na(my_data)
+
+Call the sum() function on my_na to count the total
+number of TRUEs in my_na, and thus the total number of NAs in my_data. Don't
+assign the result to a new variable.
+
+0/0 is NaN. (Inf - Inf) is NaN.
+
+----------------------------------------------------------------------------------------------------------------------
+Commands on Subsetting:
+
+> x[1:10]
+
+What do you think x[is.na(x)] will give you?
+Answer: A vector of all NAs.
+
+> y <- x[!is.na(x)]
+
+Since NA is not a value, but rather a placeholder for an unknown quantity, the
+expression NA > 0 evaluates to NA. 
+
+Combining our knowledge of logical operators with our new knowledge of subsetting,
+we could do this -- 
+> x[!is.na(x) & x > 0]. Try it out.
+
+Can you figure out how we'd subset the 3rd, 5th, and 7th elements of x?
+> x[c(3,5,7)]
+
+Luckily, R accepts negative integer indexes. Whereas x[c(2, 10)] gives us ONLY the
+2nd and 10th elements of x, x[c(-2, -10)] gives us all elements of x EXCEPT for
+the 2nd and 10 elements.
+> x[c(-2, -10)]
+
+Create a numeric vector with three named elements using vect <- c(foo = 11, bar = 2, norf = NA).
+
+We can also get the names of vect by passing vect as an argument to the names() function.
+
+Alternatively, we can create an unnamed vector vect2 with c(11, 2, NA). Then, we can add 
+the `names` attribute to vect2 after the fact with names(vect2) <- c("foo", "bar", "norf").
+
+let's check that vect and vect2 are the same by passing them as arguments to
+the identical() function.
+> identical(vect,vect2) 
+
+Which of the following commands do you think would give us the second element of vect?
+> vect["bar"]
+
+----------------------------------------------------------------------------------------------------------------------
+Commands on Matrices and Data Frame:
+
+The dim() function tells us the 'dimensions' of an object. What happens if we do dim(my_vector)?
+Answer: NULL.
+
+But in this case length(my_vector) will works.
+
+What happens if we give my_vector a `dim` attribute? Let's give it a try. Type:
+> dim(my_vector) <- c(4, 5)
+> dim(my_vector)
+
+Another way to see this is by calling the attributes() function on my_vector.
+> attributes(my_vector)
+> class(my_vector)
+
+how to create a matrix containing the same numbers (1-20) and dimensions (4 rows, 5 columns) by 
+calling the matrix() function. Store the result in a variable called my_matrix2.
+> my_matrix2 <- matrix(1:20, nrow = 4, ncol = 5)
+
+> patients <- c("Bill", "Gina", "Kelly", "Sean")
+
+> cbind(patients, my_matrix)
+# That makes everything strings. (Which is wrong).
+
+we're still left with the question of how to include the names of our patients
+in the table without destroying the integrity of our numeric data. Try the
+following -- 
+> my_data <- data.frame(patients, my_matrix)
+
+Since we have six columns (including patient names), we'll need to first create a
+vector containing one element for each column. Create a character vector called
+cnames that contains the following values (in order) -- "patient", "age",
+"weight", "bp", "rating", "test".
+
+Now, use the colnames() function to set the `colnames` attribute for our data
+frame. This is similar to the way we used the dim() function earlier in this lesson.
+> colnames(my_data) <- cnames
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+load a csv file:
+> hw1_data <- read.csv("G:/SAMIUL/BSc_MSc/ProfessionalDevelopment/Data_Science_Specialization/Course_2_R_Programming/Week_1/R_code/hw1_data.csv")
+
+>   View(hw1_data)
+
+OR Go to Environment, and use import dataset.
