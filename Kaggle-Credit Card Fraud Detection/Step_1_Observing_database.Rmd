@@ -1,0 +1,93 @@
+---
+title: "Fraud Detection in an Imbalanced Dataset"
+author: "Samiul Azam"
+date: "October 27, 2017"
+output: html_document
+subtitle: 'Step 1: Observing the database'
+---
+
+# Synopsis  
+In this analysis, I consider the given database ("creditcard.csv" provided by ATB, Calgary) to understand the basic structure of the data, metadata and variables (types and values). In addition, I check for any inconsistency, as well as apply a transformation of the "Time" variable to make it easy-understandable.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r step2}
+# Reading the Dataset
+data <- read.csv(file="creditcard.csv", head=TRUE, sep=",")
+
+# Let's see the dimension of the data
+dim(data)
+```
+
+So, there are 284807 observations with 31 variables.
+
+```{r step3}
+# Let see the Variable names
+colnames(data)
+```
+I need to know the exact variable names of in the dataframe, 
+so that I can use them in the later part of the program. 
+
+```{r step4}
+# Summary statistics on each variable (Min, Max, Mean and quantiles)
+summary(data)
+```
+
+Here, we see the range of the data for each variable. Variables "V1" to "V28" 
+are the PCA transformed anonymized data. As they are PCA transformed, all
+of them have zero means. If we see the mean of the "Class" variable, we can
+say that only 0.173% of transactions are the fraud.
+
+```{r step5}
+# Let see the types of the variables with few examples.
+str(data)
+```
+Most of the variables are real numbers. Only "Class" variable is integer.
+Most importantly, there is no non-numeric (string) data.
+
+```{r step6}
+#Let see is there any missing values inside any variable or column 
+colSums(is.na(data))
+```
+
+Great, there is no missing values. If there are missing values, then
+I need to replace them with the mean/median value of the corresponding
+variable.
+
+```{r step7}
+# Count number of positive classes (Fraud transactions)
+sum(data$Class == 1)
+```
+Only 492 transactions are fraud. Rest of the 284315 transactions are genuine.
+So, the data is highly skewed/imbalanced.
+
+```{r step8}
+# Let see the first 100 observations of the Time variable.
+head(data$Time, n = 100)
+```
+"Time" variable is monotonically increasing sequence of data, as it's the 
+elapsed time (in seconds) from the start point of the data collection phase.
+
+```{r step9}
+# Let see the time frame of the data in hours
+summary(data$Time)[6]/3600 # 1 hour is 3600 seconds
+```
+
+That means, all these transactions are gathered in two days of time frame. 
+
+```{r step10}
+# Convert into 24 hours time
+data$Time <- floor(data$Time/3600) %% 24
+summary(data$Time)
+```
+
+For easy interpretability, the "Time" variable is transformed into 24 hours (0 - 23).
+It will help to co-relate the fraud transactions with the hours of a day. Let assume
+that data collection starts at 00:00 AM.
+
+After this analysis, we have got the basic understanding of the data and the variables.
+We conclude that the data is well-structured and tidy. In the nest step, I will do 
+exploratory analysis of the variables to get some intuitions on the importance of 
+individual variables in Fraud detection.
